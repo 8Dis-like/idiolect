@@ -1,0 +1,26 @@
+# Serving configuration for CodeForge API
+server:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 1
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://localhost:5173"
+    - "https://your-domain.com"
+
+model:
+  checkpoint_path: "checkpoints/finetune/best.pt"
+  lora_path: "checkpoints/finetune/lora_adapter"
+  tokenizer_path: "artifacts/tokenizer"
+  device: "cuda"
+  max_new_tokens: 256
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 50
+
+# Style fingerprint engine
+style_analysis:
+  # Pre-computed style embeddings for famous developers
+  style_db_path: "artifacts/style_embeddings.pt"
+  # Top-K similar styles to return
+  top_k_styles: 5

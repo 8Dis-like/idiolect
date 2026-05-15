@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev]"
+
+      - name: Lint with ruff
+        run: |
+          ruff check codeforge/ tests/
+          ruff format --check codeforge/ tests/
+
+      - name: Type check with mypy
+        run: |
+          mypy codeforge/ --ignore-missing-imports
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --tb=short -x
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t codeforge:${{ github.sha }} .
+
+      # In production, push to ECR here:
+      # - name: Push to ECR
+      #   run: |
+      #     aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_REGISTRY
+      #     docker tag codeforge:${{ github.sha }} $ECR_REGISTRY/codeforge:${{ github.sha }}
+      #     docker push $ECR_REGISTRY/codeforge:${{ github.sha }}

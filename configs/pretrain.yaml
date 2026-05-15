@@ -1,0 +1,56 @@
+# Pre-training configuration for CodeForge
+# GPT-2 style causal language model on Python code
+
+model:
+  vocab_size: 32000
+  max_seq_len: 512   # Reduced from 1024 to fit Colab T4 16GB
+  n_layers: 8        # Reduced from 12 (~85M params, fits T4)
+  n_heads: 8         # Reduced from 12
+  d_model: 512       # Reduced from 768
+  d_ff: 2048         # 4 * d_model
+  dropout: 0.1
+  activation: "gelu"
+  bias: false  # Modern practice: no bias in linear layers
+  rope: true   # Rotary positional embeddings (better than learned)
+
+data:
+  dataset: "bigcode/the-stack-v2"
+  subset: "Python"
+  max_seq_len: 1024
+  tokenizer_path: "artifacts/tokenizer"
+  num_workers: 8
+  pin_memory: true
+  prefetch_factor: 4
+
+training:
+  # Optimization
+  batch_size: 32          # Per-GPU batch size
+  gradient_accumulation: 4 # Effective batch = 32 * 4 * num_gpus
+  max_steps: 100000
+  warmup_steps: 2000
+  learning_rate: 3.0e-4
+  min_learning_rate: 3.0e-5
+  weight_decay: 0.1
+  max_grad_norm: 1.0
+  betas: [0.9, 0.95]
+
+  # Precision
+  mixed_precision: true   # AMP with bf16
+  compile: true            # torch.compile for speedup
+
+  # Checkpointing
+  checkpoint_dir: "checkpoints/pretrain"
+  save_every_steps: 5000
+  eval_every_steps: 1000
+
+  # Distributed
+  distributed: true
+  backend: "nccl"
+
+  # Logging
+  wandb_project: "codeforge"
+  wandb_run_name: "pretrain-200m-python"
+  log_every_steps: 50
+
+  # Reproducibility
+  seed: 42

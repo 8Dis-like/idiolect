@@ -1,0 +1,68 @@
+# Fine-tuning configuration for CodeForge
+# LoRA fine-tuning on personal code repositories
+
+model:
+  # Load pre-trained checkpoint
+  pretrained_checkpoint: "checkpoints/pretrain/best.pt"
+  vocab_size: 32000
+  max_seq_len: 1024
+  n_layers: 12
+  n_heads: 12
+  d_model: 768
+  d_ff: 3072
+  dropout: 0.05  # Lower dropout for fine-tuning
+  activation: "gelu"
+  bias: false
+  rope: true
+
+lora:
+  enabled: true
+  rank: 8
+  alpha: 16
+  dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+  # Freeze base model, only train LoRA adapters
+  # Trainable params: ~2M / 200M total = ~1%
+
+data:
+  # Personal code repos to fine-tune on
+  github_repos:
+    - "https://github.com/YOUR_USERNAME/repo1"
+    - "https://github.com/YOUR_USERNAME/repo2"
+  # Or local directory
+  local_dir: "data/personal_code"
+  max_seq_len: 1024
+  tokenizer_path: "artifacts/tokenizer"
+  num_workers: 4
+  train_split: 0.9
+  val_split: 0.1
+
+training:
+  batch_size: 16
+  gradient_accumulation: 2
+  max_steps: 5000
+  warmup_steps: 200
+  learning_rate: 1.0e-4    # Lower LR for fine-tuning
+  min_learning_rate: 1.0e-5
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  betas: [0.9, 0.95]
+
+  mixed_precision: true
+  compile: false  # Compile doesn't always play well with LoRA
+
+  checkpoint_dir: "checkpoints/finetune"
+  save_every_steps: 500
+  eval_every_steps: 200
+
+  distributed: false  # Fine-tuning is fast, single GPU is fine
+
+  wandb_project: "codeforge"
+  wandb_run_name: "finetune-lora-personal"
+  log_every_steps: 20
+
+  seed: 42
