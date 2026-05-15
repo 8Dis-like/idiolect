@@ -1,18 +1,20 @@
-# 🔥 CodeForge — Personal Code Style LLM
+# 🔥 Idiolect — Personal Code Style LLM
 
+> *Your code has a fingerprint. Idiolect learns it.*
+>
 > Pre-train a GPT-2-style Transformer from scratch on Python code, then fine-tune it to write code in **your** personal style.
 
-[![CI](https://github.com/YOUR_USERNAME/codeforge/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/codeforge/actions)
+[![CI](https://github.com/8Dis-like/idiolect/actions/workflows/ci.yml/badge.svg)](https://github.com/8Dis-like/idiolect/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-![CodeForge Demo](docs/assets/demo_preview.png)
+![Idiolect Demo](docs/assets/demo_preview.png)
 
-## 🎯 What is CodeForge?
+## 🎯 What is Idiolect?
 
-CodeForge is an **end-to-end ML pipeline** that:
+**Idiolect** *(noun): an individual's distinctive language patterns.* This project is an **end-to-end ML pipeline** that:
 
-1. **Pre-trains** a 200M-parameter GPT-2 Transformer on 50GB of Python code from [The Stack v2](https://huggingface.co/datasets/bigcode/the-stack-v2)
+1. **Pre-trains** an 85M-parameter GPT-2 Transformer from scratch on Python code from [The Stack v2](https://huggingface.co/datasets/bigcode/the-stack-v2)
 2. **Fine-tunes** with LoRA on any developer's personal GitHub repositories to capture their unique coding style
 3. **Serves** predictions via a production REST API on AWS
 4. **Analyzes** coding style fingerprints — discover which famous developer you code like!
@@ -31,11 +33,11 @@ CodeForge is an **end-to-end ML pipeline** that:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    CodeForge Pipeline                        │
+│                    Idiolect Pipeline                         │
 │                                                             │
 │  ┌──────────┐   ┌──────────────┐   ┌───────────────────┐  │
 │  │ The Stack │──▶│ BPE Tokenizer│──▶│ Pre-training       │  │
-│  │ v2 Python │   │ (custom)     │   │ GPT-2 200M params  │  │
+│  │ v2 Python │   │ (custom)     │   │ GPT-2 85M params   │  │
 │  │ 50GB      │   │ 32K vocab    │   │ Causal LM objective│  │
 │  └──────────┘   └──────────────┘   └─────────┬─────────┘  │
 │                                               │             │
@@ -63,14 +65,14 @@ CodeForge is an **end-to-end ML pipeline** that:
 | Fine-tune style accuracy | TBD |
 | Inference latency (P95) | <100ms |
 | Training throughput (DDP 4x) | TBD tokens/sec |
-| LoRA trainable params | ~2M / 200M (1%) |
+| LoRA trainable params | ~2M / 85M (~2%) |
 
 ## 🚀 Quick Start
 
 ```bash
 # Clone
-git clone https://github.com/YOUR_USERNAME/codeforge.git
-cd codeforge
+git clone https://github.com/8Dis-like/idiolect.git
+cd idiolect
 
 # Install dependencies
 pip install -e ".[dev]"
@@ -133,9 +135,9 @@ codeforge/
 
 ## 📝 Blog Posts
 
-- [How I Pre-trained a 200M-param Code LLM on a Single A10G](blog-link)
+- [How I Pre-trained an 85M-param Code LLM from Scratch](blog-link)
 - [LoRA Fine-tuning for Personal Code Style Transfer](blog-link)
-- [Building a Coding Style Fingerprint Engine](blog-link)
+- [Building a Coding Style Fingerprint Engine with Idiolect](blog-link)
 
 ## 📄 License
 
