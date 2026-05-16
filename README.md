@@ -8,8 +8,6 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-![Idiolect Demo](docs/assets/demo_preview.png)
-
 ## 🎯 What is Idiolect?
 
 **Idiolect** *(noun): an individual's distinctive language patterns.* This project is an **end-to-end ML pipeline** that:
