@@ -138,12 +138,22 @@ class MultiHeadAttention(nn.Module):
         return self.resid_dropout(self.o_proj(attn_out)), None
 
 
+class RMSNorm(nn.Module):
+    def __init__(self, d_model: int, eps: float = 1e-5):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(d_model))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        norm = torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+        return x * norm * self.weight
+
 class TransformerBlock(nn.Module):
     def __init__(self, config):
         super().__init__()
-        self.ln1 = nn.RMSNorm(config.d_model)
+        self.ln1 = RMSNorm(config.d_model)
         self.attn = MultiHeadAttention(config.d_model, config.n_heads, config.dropout, config.bias, config.max_seq_len)
-        self.ln2 = nn.RMSNorm(config.d_model)
+        self.ln2 = RMSNorm(config.d_model)
         self.ffn = nn.Sequential(
             nn.Linear(config.d_model, config.d_ff, bias=config.bias),
             nn.GELU(approximate="tanh"),
@@ -165,7 +175,7 @@ class CodeForgeModel(nn.Module):
         self.tok_emb = nn.Embedding(config.vocab_size, config.d_model)
         self.emb_dropout = nn.Dropout(config.dropout)
         self.blocks = nn.ModuleList([TransformerBlock(config) for _ in range(config.n_layers)])
-        self.ln_f = nn.RMSNorm(config.d_model)
+        self.ln_f = RMSNorm(config.d_model)
         self.lm_head = nn.Linear(config.d_model, config.vocab_size, bias=False)
         self.lm_head.weight = self.tok_emb.weight  # Weight tying
         self.apply(self._init_weights)

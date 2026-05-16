@@ -24,6 +24,21 @@ from codeforge.model.attention import MultiHeadAttention
 from codeforge.model.config import CodeForgeConfig
 
 
+class RMSNorm(nn.Module):
+    """Root Mean Square Layer Normalization.
+    
+    Backwards compatible implementation for PyTorch < 2.4.
+    """
+    def __init__(self, d_model: int, eps: float = 1e-5):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(d_model))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        norm = torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+        return x * norm * self.weight
+
+
 class FeedForward(nn.Module):
     """Position-wise feed-forward network with GELU activation.
 
@@ -53,7 +68,7 @@ class TransformerBlock(nn.Module):
 
     def __init__(self, config: CodeForgeConfig):
         super().__init__()
-        self.ln1 = nn.RMSNorm(config.d_model)
+        self.ln1 = RMSNorm(config.d_model)
         self.attn = MultiHeadAttention(
             d_model=config.d_model,
             n_heads=config.n_heads,
@@ -62,7 +77,7 @@ class TransformerBlock(nn.Module):
             max_seq_len=config.max_seq_len,
             use_rope=config.rope,
         )
-        self.ln2 = nn.RMSNorm(config.d_model)
+        self.ln2 = RMSNorm(config.d_model)
         self.ffn = FeedForward(
             d_model=config.d_model,
             d_ff=config.d_ff,
@@ -114,7 +129,7 @@ class CodeForgeModel(nn.Module):
         ])
 
         # Final layer norm
-        self.ln_f = nn.RMSNorm(config.d_model)
+        self.ln_f = RMSNorm(config.d_model)
 
         # Output projection (tied with token embedding)
         self.lm_head = nn.Linear(config.d_model, config.vocab_size, bias=False)
