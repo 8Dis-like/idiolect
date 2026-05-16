@@ -25,7 +25,6 @@
 - **Parameter-Efficient Fine-tuning**: LoRA (rank=8) reduces trainable parameters by 98%
 - **Style Fingerprinting**: Novel coding style analysis using embedding-space clustering
 - **Production Deployment**: FastAPI on AWS ECS with <100ms P95 latency
-- **Interactive Web Demo**: Try it live at [demo-url]
 
 ## 🏗️ Architecture
 
@@ -131,12 +130,3 @@ codeforge/
 └── docs/                 # Architecture & guides
 ```
 
-## 📝 Blog Posts
-
-- [How I Pre-trained an 85M-param Code LLM from Scratch](blog-link)
-- [LoRA Fine-tuning for Personal Code Style Transfer](blog-link)
-- [Building a Coding Style Fingerprint Engine with Idiolect](blog-link)
-
-## 📄 License
-
-MIT License — see [LICENSE](LICENSE) for details.
