@@ -16,9 +16,29 @@
 import subprocess
 subprocess.run(["pip", "install", "-q", "tokenizers>=0.19.0", "datasets>=2.18.0", "huggingface_hub"], check=True)
 
+# --- Cell 1b: Hugging Face Login ---
+import os
+from huggingface_hub import login
+from kaggle_secrets import UserSecretsClient
+
+print("🔐 Logging into Hugging Face...")
+try:
+    user_secrets = UserSecretsClient()
+    hf_token = user_secrets.get_secret("HF_TOKEN")
+    login(hf_token)
+    print("✅ Successfully logged in!")
+except Exception as e:
+    print("⚠️  Error accessing HF_TOKEN secret. Did you add it to Kaggle Secrets?")
+    print("   1. Go to Add-ons -> Secrets")
+    print("   2. Add a new secret named HF_TOKEN")
+    print("   3. Paste your Hugging Face token (get it from huggingface.co/settings/tokens)")
+    print("   4. Attach it to this notebook and run again.")
+    raise e
+
 # --- Cell 2: Download Python code subset ---
 import os
 from pathlib import Path
+# pyrefly: ignore [missing-import]
 from datasets import load_dataset
 
 print("📥 Downloading Python code from StarCoder data...")
@@ -74,6 +94,7 @@ f.close()
 print(f"✅ Extracted {num_files:,} files into {current_batch + 1} batches")
 
 # --- Cell 3: Train BPE Tokenizer ---
+# pyrefly: ignore [missing-import]
 from tokenizers import Tokenizer, models, trainers, pre_tokenizers, processors, decoders
 
 print("\n🔧 Training BPE tokenizer (vocab_size=32,000)...")
