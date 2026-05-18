@@ -198,8 +198,8 @@ class CodeForgeModel(nn.Module):
         loss = None
         if targets is not None:
             loss = F.cross_entropy(
-                logits[:, :-1, :].contiguous().view(-1, self.config.vocab_size),
-                targets[:, 1:].contiguous().view(-1), ignore_index=-1
+                logits.view(-1, self.config.vocab_size),
+                targets.view(-1), ignore_index=-1
             )
         return logits, loss
 
@@ -278,6 +278,15 @@ config = CodeForgeConfig(vocab_size=VOCAB_SIZE)
 model = CodeForgeModel(config).cuda()
 print(f"Model: {model.count_parameters():,} params on {torch.cuda.get_device_name(0)}")
 
+# --- WandB Init ---
+import wandb
+wandb.init(
+    project="idiolect-pretrain",
+    name="a100-run",
+    config=vars(config),
+    resume="allow"
+)
+
 # Training hyperparams (tuned for Colab T4)
 BATCH_SIZE = 16          # Per-step batch size
 GRAD_ACCUM = 8           # Effective batch = 16 * 8 = 128
@@ -286,7 +295,7 @@ WARMUP_STEPS = 1000
 LR = 3e-4
 MIN_LR = 3e-5
 LOG_EVERY = 50
-SAVE_EVERY = 1000        # Save to Drive every 1000 steps
+SAVE_EVERY = 250        # Save to Drive more frequently (every ~2-5 mins on A100)
 EVAL_EVERY = 500
 
 # Optimizer
@@ -380,6 +389,14 @@ for step in range(start_step, MAX_STEPS):
         # Append to log file on Drive
         with open(LOG_FILE, "a") as f:
             f.write(json.dumps(log) + "\n")
+            
+        # Log to WandB
+        wandb.log({
+            "loss": accum_loss,
+            "lr": lr,
+            "grad_norm": grad_norm,
+            "tokens_per_sec": tps
+        }, step=step+1)
 
         accum_loss = 0.0
         t_start = time.time()
@@ -405,3 +422,5 @@ for step in range(start_step, MAX_STEPS):
 print("\n🎉 Training complete!")
 print(f"   Final checkpoint: {CHECKPOINT_DIR}/step_{MAX_STEPS}.pt")
 print(f"   Copy to your local machine and push to GitHub")
+
+wandb.finish()

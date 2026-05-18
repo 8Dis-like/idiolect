@@ -192,12 +192,9 @@ class CodeForgeModel(nn.Module):
         # Compute cross-entropy loss if targets provided
         loss = None
         if targets is not None:
-            # Shift: predict token t+1 from token t
-            shift_logits = logits[:, :-1, :].contiguous()
-            shift_targets = targets[:, 1:].contiguous()
             loss = F.cross_entropy(
-                shift_logits.view(-1, self.config.vocab_size),
-                shift_targets.view(-1),
+                logits.view(-1, self.config.vocab_size),
+                targets.view(-1),
                 ignore_index=-1,  # Padding token
             )
 

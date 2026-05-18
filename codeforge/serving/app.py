@@ -117,6 +117,7 @@ async def lifespan(app: FastAPI):
 
     model_cfg = checkpoint.get("config", CodeForgeConfig())
     if isinstance(model_cfg, dict):
+        model_cfg.pop("head_dim", None)
         model_cfg = CodeForgeConfig(**model_cfg)
 
     model = CodeForgeModel(model_cfg).to(device)

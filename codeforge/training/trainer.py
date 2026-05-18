@@ -20,7 +20,8 @@ from typing import Optional
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from torch.cuda.amp import GradScaler, autocast
+from torch.cuda.amp import GradScaler
+from torch import autocast
 from rich.progress import Progress, TextColumn, BarColumn, TaskProgressColumn, TimeRemainingColumn
 
 
@@ -87,7 +88,9 @@ class Trainer:
         )
 
         # Mixed precision
-        self.scaler = GradScaler(enabled=config.mixed_precision)
+        if self.device.type == "cpu":
+            self.config.mixed_precision = False
+        self.scaler = GradScaler(enabled=self.config.mixed_precision)
         self.amp_dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
 
         # State
@@ -147,7 +150,7 @@ class Trainer:
             targets = batch["targets"].to(self.device)
 
             # pyrefly: ignore [unexpected-keyword]
-            with autocast(device_type="cuda", dtype=self.amp_dtype, enabled=self.config.mixed_precision):
+            with autocast(device_type=self.device.type, dtype=self.amp_dtype, enabled=self.config.mixed_precision):
                 _, loss = self.model(input_ids, targets=targets)
 
             total_loss += loss.item()
@@ -235,7 +238,7 @@ class Trainer:
 
                 # Forward pass with mixed precision
                 # pyrefly: ignore [unexpected-keyword]
-                with autocast(device_type="cuda", dtype=self.amp_dtype, enabled=self.config.mixed_precision):
+                with autocast(device_type=self.device.type, dtype=self.amp_dtype, enabled=self.config.mixed_precision):
                     _, loss = self.model(input_ids, targets=targets)
                     loss = loss / self.config.gradient_accumulation
 
