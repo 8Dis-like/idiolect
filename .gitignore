@@ -12,7 +12,7 @@ build/
 # Model artifacts (too large for git)
 checkpoints/
 !checkpoints/lora/
-artifacts/
+artifacts/*
 !artifacts/tokenizer/
 *.pt
 !checkpoints/lora/**/*.pt
