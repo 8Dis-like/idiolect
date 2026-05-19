@@ -9,10 +9,11 @@ server:
     - "https://your-domain.com"
 
 model:
-  checkpoint_path: "checkpoints/finetune/best.pt"
-  lora_path: "checkpoints/finetune/lora_adapter"
+  checkpoint_path: "checkpoints/pretrain/step_50000.pt"
+  lora_path: "checkpoints/lora/zagho_style/lora_weights.pt"
   tokenizer_path: "artifacts/tokenizer"
-  device: "cuda"
+  device: "cpu"  # Or 'cuda' if you have local GPU
+
   max_new_tokens: 256
   temperature: 0.7
   top_p: 0.9

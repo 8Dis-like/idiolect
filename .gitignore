@@ -11,8 +11,10 @@ build/
 
 # Model artifacts (too large for git)
 checkpoints/
+!checkpoints/lora/
 artifacts/
 *.pt
+!checkpoints/lora/**/*.pt
 *.pth
 *.bin
 *.safetensors

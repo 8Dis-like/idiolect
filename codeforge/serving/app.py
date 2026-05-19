@@ -21,6 +21,7 @@ from pydantic import BaseModel, Field
 
 from codeforge.model import CodeForgeConfig, CodeForgeModel, load_lora_weights
 from codeforge.data.tokenizer import load_tokenizer
+from huggingface_hub import hf_hub_download
 
 
 # ============================================================
@@ -112,7 +113,18 @@ async def lifespan(app: FastAPI):
     print(f"[API] Tokenizer loaded (vocab_size={tokenizer.get_vocab_size()})")
 
     # Load model
-    checkpoint_path = model_config.get("checkpoint_path", "checkpoints/pretrain/best.pt")
+    checkpoint_path = model_config.get("checkpoint_path", "checkpoints/pretrain/step_50000.pt")
+    if not os.path.exists(checkpoint_path):
+        print(f"[API] Local checkpoint not found at {checkpoint_path}. Downloading from Hugging Face...")
+        # Make sure to install huggingface_hub: pip install huggingface_hub
+        hf_repo = os.environ.get("HF_REPO_ID", "Zagho/idiolect")
+        hf_filename = os.environ.get("HF_MODEL_FILENAME", "model.pt")
+        try:
+            checkpoint_path = hf_hub_download(repo_id=hf_repo, filename=hf_filename)
+            print(f"[API] Successfully downloaded model from Hugging Face to {checkpoint_path}")
+        except Exception as e:
+            print(f"[API] Failed to download from Hugging Face: {e}")
+            raise
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
 
     model_cfg = checkpoint.get("config", CodeForgeConfig())
