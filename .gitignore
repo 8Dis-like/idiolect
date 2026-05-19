@@ -13,6 +13,7 @@ build/
 checkpoints/
 !checkpoints/lora/
 artifacts/
+!artifacts/tokenizer/
 *.pt
 !checkpoints/lora/**/*.pt
 *.pth
