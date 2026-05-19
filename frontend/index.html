@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idiolect | Personal Code LLM</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for Style Radar -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <header class="navbar">
+        <div class="logo">
+            <span class="glow-text">Idiolect</span>
+            <span class="badge">v0.1 Alpha</span>
+        </div>
+        <div class="nav-links">
+            <a href="https://8dis-like.github.io/" target="_blank">Blog</a>
+            <a href="https://github.com/8Dis-like" target="_blank">GitHub</a>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <!-- Configuration Panel -->
+        <aside class="sidebar glass-panel">
+            <h2>Model Configuration</h2>
+            <div class="config-group">
+                <label for="api-url">API Endpoint URL</label>
+                <input type="text" id="api-url" value="http://YOUR_EC2_IP:8000" placeholder="e.g., http://3.215.181.105:8000">
+            </div>
+            
+            <div class="config-group">
+                <label>Style Fingerprint</label>
+                <div class="chart-container">
+                    <canvas id="styleRadar"></canvas>
+                </div>
+                <p class="chart-desc">Real-time stylistic alignment with my personal GitHub repositories (powered by LoRA).</p>
+            </div>
+        </aside>
+
+        <!-- Generation Panel -->
+        <section class="main-panel">
+            <div class="editor-container glass-panel">
+                <div class="editor-header">
+                    <span>Prompt</span>
+                    <button id="generate-btn" class="primary-btn">Generate Code</button>
+                </div>
+                <textarea id="prompt-input" spellcheck="false" placeholder="def merge_sort(arr):&#10;    &quot;&quot;&quot;Merge sort implementation&quot;&quot;&quot;"></textarea>
+            </div>
+
+            <div class="editor-container glass-panel output-panel">
+                <div class="editor-header">
+                    <span>Generated Output</span>
+                    <span id="status-indicator" class="status-idle">Ready</span>
+                </div>
+                <pre><code id="code-output" class="language-python"># Output will appear here...</code></pre>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
