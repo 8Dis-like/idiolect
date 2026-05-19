@@ -81,7 +81,7 @@ async function handleGenerate() {
         if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
         
         const data = await response.json();
-        const generatedCode = data.generated_text;
+        const generatedCode = data.generated_code; // Fixed: API returns generated_code
         
         codeOutput.textContent = generatedCode;
         setStatus("Analyzing style...", "loading");
