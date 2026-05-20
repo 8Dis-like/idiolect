@@ -47,7 +47,6 @@ function initChart() {
 }
 
 // DOM Elements
-const apiUrlInput = document.getElementById('api-url');
 const promptInput = document.getElementById('prompt-input');
 const generateBtn = document.getElementById('generate-btn');
 const codeOutput = document.getElementById('code-output');
@@ -60,11 +59,7 @@ function setStatus(text, className) {
 
 async function handleGenerate() {
     const prompt = promptInput.value.trim();
-    // Default to the Vercel proxy endpoint if no specific IP is provided
-    let apiUrl = apiUrlInput.value.trim().replace(/\/$/, ""); 
-    if (apiUrl === "http://YOUR_EC2_IP:8000" || apiUrl === "") {
-        apiUrl = "/api";
-    }
+    const apiUrl = "/api";
     
     if (!prompt) return;
 

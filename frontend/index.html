@@ -29,10 +29,6 @@
         <!-- Configuration Panel -->
         <aside class="sidebar glass-panel">
             <h2>Model Configuration</h2>
-            <div class="config-group">
-                <label for="api-url">API Endpoint URL</label>
-                <input type="text" id="api-url" value="http://YOUR_EC2_IP:8000" placeholder="e.g., http://3.215.181.105:8000">
-            </div>
             
             <div class="config-group">
                 <label>Style Fingerprint</label>
@@ -45,6 +41,11 @@
 
         <!-- Generation Panel -->
         <section class="main-panel">
+            <div class="intro-box glass-panel">
+                <h3>Welcome to Idiolect</h3>
+                <p>This is a custom 85M parameter Code LLM trained from scratch and fine-tuned using LoRA to perfectly mimic my personal coding style. Type a python function signature below (e.g., <code>def fetch_data(url):</code>) and click Generate to see the model write code exactly how I would!</p>
+            </div>
+
             <div class="editor-container glass-panel">
                 <div class="editor-header">
                     <span>Prompt</span>
