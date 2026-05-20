@@ -96,16 +96,24 @@ async function handleGenerate() {
         if (!styleResponse.ok) throw new Error("Style analysis failed");
         
         const styleData = await styleResponse.json();
-        const metrics = styleData.metrics;
+
+        // Calculate heuristic metrics from the generated code text directly
+        // since the backend only returns high-level similarity scores.
+        const metrics = {
+            functions_count: (generatedCode.match(/def /g) || []).length,
+            docstrings_count: (generatedCode.match(/"""/g) || []).length / 2,
+            type_hints_count: (generatedCode.match(/->|:\s*[a-zA-Z]/g) || []).length,
+            avg_name_length: 10, // hardcoded for demo simplicity
+            max_indentation: (generatedCode.match(/^ +/gm) || ['']).reduce((max, space) => Math.max(max, space.length), 0)
+        };
 
         // Map backend metrics to radar chart (0-100 scale simulation for demo)
-        // In a real app, the backend would normalize these.
         const radarData = [
             Math.min(100, metrics.functions_count * 20 || 50), // Modularity
             Math.min(100, metrics.docstrings_count * 40 || 10), // Docstrings
             Math.min(100, metrics.type_hints_count * 30 || 20), // Typing
-            Math.min(100, metrics.avg_name_length * 5 || 60),  // Naming
-            Math.max(20, 100 - (metrics.max_indentation * 10)) // Complexity
+            Math.min(100, styleData.matches[0].similarity * 100 || 60),  // Naming (borrowed from API similarity)
+            Math.max(20, 100 - (metrics.max_indentation * 4)) // Complexity
         ];
 
         updateRadarChart(radarData);
