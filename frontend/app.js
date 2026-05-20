@@ -60,7 +60,11 @@ function setStatus(text, className) {
 
 async function handleGenerate() {
     const prompt = promptInput.value.trim();
-    const apiUrl = apiUrlInput.value.trim().replace(/\/$/, ""); // Remove trailing slash
+    // Default to the Vercel proxy endpoint if no specific IP is provided
+    let apiUrl = apiUrlInput.value.trim().replace(/\/$/, ""); 
+    if (apiUrl === "http://YOUR_EC2_IP:8000" || apiUrl === "") {
+        apiUrl = "/api";
+    }
     
     if (!prompt) return;
 
