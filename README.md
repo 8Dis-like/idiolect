@@ -57,9 +57,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Pre-training loss (final) | TBD |
-| Perplexity (The Stack val) | TBD |
-| Fine-tune style accuracy | TBD |
+| Pre-training loss (final) | 3.52164386212826 |
+| Tokens per second | 129854.046183306 |
+| Fine-tune style accuracy | 5.22863829135896 |
 | Inference latency (P95) | <100ms |
 | Training throughput (DDP 4x) | TBD tokens/sec |
 | LoRA trainable params | ~2M / 85M (~2%) |
